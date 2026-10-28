@@ -1,0 +1,35 @@
+flowchart TD
+    A[Start Streamlit app] --> B[Load .env configuration]
+    B --> C{MYSQL_PASSWORD exists?}
+
+    C -- No --> D[Show initialization error]
+    C -- Yes --> E[Build MySQL connection URL]
+
+    E --> F[Connect to MySQL task_manager database]
+    F --> G{Connection successful?}
+
+    G -- No --> D
+    G -- Yes --> H[Create tasks table if it does not exist]
+
+    H --> I[Create ChatGroq model]
+    I --> J[Create SQLDatabaseToolkit]
+    J --> K[Create LangChain agent]
+    K --> L[Cache database and agent resources]
+    L --> M[Render Streamlit chat interface]
+
+    M --> N{User enters a prompt?}
+    N -- No --> M
+    N -- Yes --> O[Save user message in session state]
+
+    O --> P[Invoke agent with thread_id]
+    P --> Q{Agent succeeds?}
+
+    Q -- No --> R[Show request error]
+    R --> M
+
+    Q -- Yes --> S[Agent selects SQL tool]
+    S --> T[Execute SQL against MySQL]
+    T --> U[Return result to Groq model]
+    U --> V[Display assistant response]
+    V --> W[Save assistant response in session state]
+    W --> M
